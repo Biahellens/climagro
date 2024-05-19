@@ -11,6 +11,9 @@ import { Stack } from "@mui/material";
 import Login from "@pages/Login/Login";
 import Dashboard from "@pages/Dashboard/Dashboard";
 
+// Components
+import Header from "@components/Header/Header";
+
 function App() {
   return (
     <Router>
@@ -23,12 +26,15 @@ function App() {
   );
 }
 
+export default App;
+
 function ProtectedRoutes() {
   //const isMobile = UseMobile();
 
   return (
     <>
-      <Stack height="100vh" justifyContent="space-between" className="BaseApp">
+      <Stack height="100vh" justifyContent="space-between">
+        <Header />
         <Routes>
           <Route path="/dashboard" element={<Dashboard />} />
         </Routes>
@@ -36,5 +42,3 @@ function ProtectedRoutes() {
     </>
   );
 }
-
-export default App;
