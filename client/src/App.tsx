@@ -23,12 +23,14 @@ function App() {
   );
 }
 
+export default App;
+
 function ProtectedRoutes() {
   //const isMobile = UseMobile();
 
   return (
     <>
-      <Stack height="100vh" justifyContent="space-between" className="BaseApp">
+      <Stack height="100vh" justifyContent="space-between">
         <Routes>
           <Route path="/dashboard" element={<Dashboard />} />
         </Routes>
@@ -36,5 +38,3 @@ function ProtectedRoutes() {
     </>
   );
 }
-
-export default App;
