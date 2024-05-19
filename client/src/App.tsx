@@ -11,6 +11,9 @@ import { Stack } from "@mui/material";
 import Login from "@pages/Login/Login";
 import Dashboard from "@pages/Dashboard/Dashboard";
 
+// Components
+import Header from "@components/Header/Header";
+
 function App() {
   return (
     <Router>
@@ -31,6 +34,7 @@ function ProtectedRoutes() {
   return (
     <>
       <Stack height="100vh" justifyContent="space-between">
+        <Header />
         <Routes>
           <Route path="/dashboard" element={<Dashboard />} />
         </Routes>
