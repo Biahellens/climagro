@@ -6,7 +6,9 @@ export default function Dashboard() {
 
   return (
     <Stack width="100vw" height={isMobile ? "100%" : "100vh"}>
-      <Typography>Dashboard page</Typography>
+      <Stack>
+        <Typography>Dashboard page</Typography>
+      </Stack>
     </Stack>
   );
 }

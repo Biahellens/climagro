@@ -5,6 +5,7 @@ import {
   BrowserRouter as Router,
   Routes,
 } from "react-router-dom";
+import { UseMobile } from "@contexts/MobileContext";
 import { Stack } from "@mui/material";
 
 // Pages
@@ -13,6 +14,7 @@ import Dashboard from "@pages/Dashboard/Dashboard";
 
 // Components
 import Header from "@components/Header/Header";
+import MenuNavigation from "@components/Menu/MenuNavigation";
 
 function App() {
   return (
@@ -29,15 +31,20 @@ function App() {
 export default App;
 
 function ProtectedRoutes() {
-  //const isMobile = UseMobile();
+  const isMobile = UseMobile();
 
   return (
     <>
       <Stack height="100vh" justifyContent="space-between">
         <Header />
-        <Routes>
-          <Route path="/dashboard" element={<Dashboard />} />
-        </Routes>
+        <Stack flexDirection='row' width='100%' position='fixed' top='5rem'>
+          {!isMobile &&
+            <MenuNavigation />
+          }
+          <Routes>
+            <Route path="/dashboard" element={<Dashboard />} />
+          </Routes>
+        </Stack>
       </Stack>
     </>
   );

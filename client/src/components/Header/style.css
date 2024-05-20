@@ -1,0 +1,8 @@
+.MuiPaper-root {
+  height: calc(100% - 5rem);
+  width: 100vw;
+  margin-top: 5rem;
+  background-color: #6B8E23!important;
+  color: #FFFFFF !important;
+  padding: 1.5rem;
+}

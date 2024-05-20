@@ -9,9 +9,12 @@ import CircularProgress from "@mui/material/CircularProgress";
 // Imgs
 import bg_green from "@assets/green_infos.png";
 import icon_climagro from "@assets/icon_climagro.svg";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
   const { isMobile } = UseMobile();
+  const navigate = useNavigate()
+
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -19,9 +22,11 @@ export default function Login() {
   const login = async () => {
     setLoading(true);
 
+    navigate('/dashboard')
+
     setTimeout(() => {
       setLoading(false);
-    }, 3000);
+    }, 100);
   };
 
   return (
