@@ -31,16 +31,23 @@ function App() {
 export default App;
 
 function ProtectedRoutes() {
-  const isMobile = UseMobile();
+  const { isMobile } = UseMobile();
 
   return (
     <>
-      <Stack height="100vh" justifyContent="space-between">
+      <Stack height={isMobile ? '100%' :"100vh"} justifyContent="space-between">
         <Header />
-        <Stack flexDirection='row' width='100%' position='fixed' top='5rem'>
-          {!isMobile &&
-            <MenuNavigation />
-          }
+        <Stack
+          flexDirection="row"
+          width="100%"
+          position={isMobile ? 'relative' : "fixed"}
+          top={isMobile ? 0 :"5rem"}
+          height='100%'
+          sx={{
+            overflow: isMobile ? 'scroll' : ''
+          }}
+        >
+          {!isMobile && <MenuNavigation />}
           <Routes>
             <Route path="/dashboard" element={<Dashboard />} />
           </Routes>

@@ -29,7 +29,7 @@ export default function Header() {
           background: "#6B8E23",
           padding: "2rem",
           top: 0,
-          position: "fixed",
+          position: isMobile ? '' : "fixed",
           justifyContent: "center",
           display: "flex",
           alignItems: isMobile ? "center" : "end",
