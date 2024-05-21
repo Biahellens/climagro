@@ -9,9 +9,11 @@ import DevicesIcon from "@mui/icons-material/Devices";
 import GroupIcon from "@mui/icons-material/Group";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import LogoutIcon from '@mui/icons-material/Logout';
+import { useNavigate } from "react-router-dom";
 
 export default function Header() {
   const { isMobile } = UseMobile();
+  const navigate = useNavigate()
 
   const [open, setOpen] = useState(false);
 
@@ -46,6 +48,7 @@ export default function Header() {
               }}
             >
               <Stack
+                onClick={() => navigate('/dashboard')}
                 sx={{
                   display: "flex",
                   flexDirection: "row",
@@ -59,6 +62,7 @@ export default function Header() {
                 <Typography ml={1}>Dashboard</Typography>
               </Stack>
               <Stack
+                onClick={() => navigate('/listDevice')}
                 sx={{
                   display: "flex",
                   flexDirection: "row",
@@ -72,6 +76,7 @@ export default function Header() {
                 <Typography ml={1}>Dispositivos</Typography>
               </Stack>
               <Stack
+                onClick={() => navigate('/users')}
                 sx={{
                   display: "flex",
                   flexDirection: "row",

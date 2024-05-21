@@ -12,6 +12,8 @@ import { Stack } from "@mui/material";
 import Login from "@pages/Login/Login";
 import Dashboard from "@pages/Dashboard/Dashboard";
 import ListDevices from "@pages/ListDevices/ListDevices";
+import Users from "@pages/Users/Users";
+import NewUser from "@pages/newUser/newUser";
 
 // Components
 import Header from "@components/Header/Header";
@@ -52,6 +54,8 @@ function ProtectedRoutes() {
           <Routes>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/listDevice" element={<ListDevices />} />
+            <Route path='/users' element={<Users />} />
+            <Route path='/new-user' element={<NewUser />} />
           </Routes>
         </Stack>
       </Stack>

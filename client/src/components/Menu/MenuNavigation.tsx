@@ -55,7 +55,7 @@ export default function MenuNavigation() {
         <Typography ml={1}>Dispositivos</Typography>
       </Stack>
       <Stack
-        onClick={() => navigate('/')}
+        onClick={() => navigate('/users')}
         sx={{
           display: "flex",
           flexDirection: "row",
