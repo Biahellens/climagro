@@ -25,6 +25,7 @@ import ClearIcon from "@mui/icons-material/Clear";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import { Command } from "@models/Command";
+import { ModalNewDevice } from "@pages/NewDevice/NewDevice";
 
 const StyledTableCell = styled(TableCell)(() => ({
   [`&.${tableCellClasses.head}`]: {
@@ -54,6 +55,7 @@ export default function ListDevices() {
   const [rowsPerPage] = useState(6);
   const [selectedDevice, setSelectedDevice] = useState<string | null>(null);
   const [openModal, setOpenModal] = useState(false);
+  const [openModalNewDevice, setOpenModalNewDevice] = useState(false);
 
   const [formDataCommands, setFormDataCommands] = useState<Command[]>([]);
 
@@ -102,6 +104,14 @@ export default function ListDevices() {
     setSelectedDevice(null);
   };
 
+  const handleOpenModalNewDevice = () => {
+    setOpenModalNewDevice(true);
+  };
+
+  const handleCloseModalNewDevice = () => {
+    setOpenModalNewDevice(false);
+  };
+
   const devices = [
     {
       id: "1",
@@ -118,17 +128,37 @@ export default function ListDevices() {
   ];
 
   return (
-    <Stack width="100vw" height={isMobile ? "100%" : "100vh"} padding="2rem">
-      <Stack>
+    <Stack
+      width="100vw"
+      height={isMobile ? "100%" : "100vh"}
+      padding={isMobile ? "0.5rem" : "2rem"}
+    >
+      <Stack flexDirection="row" justifyContent="space-between">
         <Typography
           sx={{
-            fontSize: isMobile ? "2rem" : "2.25rem",
+            fontSize: isMobile ? "1.5rem" : "2.25rem",
             color: "#D2691E",
             fontWeight: "600",
           }}
         >
           Lista de dispositivos
         </Typography>
+        <Button
+          onClick={() => handleOpenModalNewDevice()}
+          sx={{
+            width: isMobile ? "10rem" : "13rem",
+            height: "3rem",
+            background: "#696969",
+            color: "#FFFFFF",
+            "&:hover": {
+              background: "#FFFFFF",
+              color: "#696969",
+              border: "2px solid #696969",
+            },
+          }}
+        >
+          Novo dispositivo
+        </Button>
       </Stack>
       <Stack
         sx={{
@@ -136,52 +166,75 @@ export default function ListDevices() {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          marginTop: "10rem",
-          marginBottom: isMobile ? "5rem" : 0,
+          marginTop: isMobile ? '2rem' :"10rem",
+          marginBottom: isMobile ? "2rem" : 0,
         }}
       >
-        <Stack
-          sx={{
-            width: "100%",
-            boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
-            borderRadius: "0.2rem",
-          }}
-        >
-          <TableContainer sx={{ width: "100%" }}>
-            <Table
-              sx={{ minWidth: 500, width: "100%" }}
-              aria-label="customized table"
-            >
-              <TableHead sx={{ backgroundColor: "#666" }}>
-                <TableRow sx={{ backgroundColor: "#666" }}>
-                  <StyledTableCell>id</StyledTableCell>
-                  <StyledTableCell>Name</StyledTableCell>
-                  <StyledTableCell></StyledTableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {devices.map((row) => (
-                  <StyledTableRow
-                    sx={{
-                      "&:hover": {
-                        outline: "2px solid",
-                        outlineColor: "#C0C0C0",
-                        backgroundColor: "#C0C0C0",
-                      },
-                    }}
-                    onClick={() => handleDeviceClick(row.id)}
-                  >
-                    <StyledTableCell component="th" scope="row" size="small">
-                      {row.id}
-                    </StyledTableCell>
-                    <StyledTableCell size="small">{row.name}</StyledTableCell>
-                    <StyledTableCell size="small">resposta</StyledTableCell>
-                  </StyledTableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Stack>
+        {!isMobile && (
+          <Stack
+            sx={{
+              width: "100%",
+              boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
+              borderRadius: "0.2rem",
+            }}
+          >
+            <TableContainer sx={{ width: "100%" }}>
+              <Table
+                sx={{ minWidth: 500, width: "100%" }}
+                aria-label="customized table"
+              >
+                <TableHead sx={{ backgroundColor: "#666" }}>
+                  <TableRow sx={{ backgroundColor: "#666" }}>
+                    <StyledTableCell>id</StyledTableCell>
+                    <StyledTableCell>Name</StyledTableCell>
+                    <StyledTableCell></StyledTableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {devices.map((row) => (
+                    <StyledTableRow
+                      sx={{
+                        "&:hover": {
+                          outline: "2px solid",
+                          outlineColor: "#C0C0C0",
+                          backgroundColor: "#C0C0C0",
+                        },
+                      }}
+                      onClick={() => handleDeviceClick(row.id)}
+                    >
+                      <StyledTableCell component="th" scope="row" size="small">
+                        {row.id}
+                      </StyledTableCell>
+                      <StyledTableCell size="small">{row.name}</StyledTableCell>
+                      <StyledTableCell size="small">resposta</StyledTableCell>
+                    </StyledTableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Stack>
+        )}
+        {isMobile && (
+          <Stack width='100%'>
+            {devices.map((row) => (
+              <Stack key={row.id} width='100%' height='5rem' sx={{
+                border: '2px solid #696969',
+                borderRadius: '0.5rem',
+                justifyContent: 'center',
+                alignItems: 'center',
+                padding: '1rem',
+                marginTop: '1.5rem'
+              }}>
+                <Stack width='100%' flexDirection='row'>
+                  <Typography mr='0.5rem'>id:</Typography><Typography>{row.id}</Typography>
+                </Stack>
+                <Stack width='100%' flexDirection='row'>
+                <Typography mr='0.5rem'>Dispositivo:</Typography><Typography>{row.name}</Typography>
+                </Stack>
+              </Stack>
+            ))}
+          </Stack>
+        )}
       </Stack>
       <Stack
         mt={2}
@@ -214,7 +267,7 @@ export default function ListDevices() {
             height: isMobile ? "100%" : "35rem",
             paddingTop: isMobile ? "2rem" : "2rem",
             border: "none",
-            overflowY: 'scroll'
+            overflowY: "scroll",
           }}
         >
           <Stack
@@ -231,6 +284,14 @@ export default function ListDevices() {
               }}
             >
               Dispositivo: {selectedDevice}
+              <Typography
+                sx={{
+                  fontSize: "0.8rem",
+                  fontWeight: 400,
+                }}
+              >
+                Ao salvar você adicionará esse dispositivo a sua lista pessoal
+              </Typography>
             </Typography>
             <IconButton onClick={handleCloseModal}>
               <ClearIcon />
@@ -251,13 +312,13 @@ export default function ListDevices() {
               {formDataCommands.map((command, index) => (
                 <>
                   <Stack mt="2rem" width="100%">
-                    <Typography>Comando nº{" "}{index+1}</Typography>
+                    <Typography>Comando nº {index + 1}</Typography>
                   </Stack>
                   <Stack
                     key={index}
                     width="100%"
                     flexDirection={isMobile ? "column" : "row"}
-                    mt='0.5rem'
+                    mt="0.5rem"
                     sx={{
                       display: "flex",
                       alignItems: "center",
@@ -273,7 +334,10 @@ export default function ListDevices() {
                         }
                       />
                     </Stack>
-                    <Stack width={isMobile ? "100%" : "45%"} mt={isMobile ? '1.5rem' : 0}>
+                    <Stack
+                      width={isMobile ? "100%" : "45%"}
+                      mt={isMobile ? "1.5rem" : 0}
+                    >
                       <OutlinedInput
                         placeholder="Digite a URL"
                         value={command.url}
@@ -315,10 +379,15 @@ export default function ListDevices() {
               </Button>
             </Stack>
           </Stack>
-          <Stack flexDirection={isMobile ? "column" : "row"} justifyContent={isMobile ? "center" : "space-between"} alignItems={'center'} mt={'2rem'}>
+          <Stack
+            flexDirection={isMobile ? "column" : "row"}
+            justifyContent={isMobile ? "center" : "space-between"}
+            alignItems={"center"}
+            mt={"2rem"}
+          >
             <Button
               sx={{
-                width: isMobile ? '80%' : "13rem",
+                width: isMobile ? "80%" : "13rem",
                 background: "#8B0000",
                 color: "#FFFFFF",
                 "&:hover": {
@@ -332,8 +401,8 @@ export default function ListDevices() {
             </Button>
             <Button
               sx={{
-                marginTop: isMobile ? '1rem' : 0,
-                width: isMobile ? '80%' : "13rem",
+                marginTop: isMobile ? "1rem" : 0,
+                width: isMobile ? "80%" : "13rem",
                 background: "#6B8E23",
                 color: "#FFFFFF",
                 "&:hover": {
@@ -348,6 +417,10 @@ export default function ListDevices() {
           </Stack>
         </Stack>
       </Modal>
+      <ModalNewDevice
+        handleCloseModalNewDevice={handleCloseModalNewDevice}
+        openModalNewDevice={openModalNewDevice}
+      />
     </Stack>
   );
 }
