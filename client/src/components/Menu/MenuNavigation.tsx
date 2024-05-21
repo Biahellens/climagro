@@ -5,8 +5,11 @@ import DevicesIcon from "@mui/icons-material/Devices";
 import GroupIcon from "@mui/icons-material/Group";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import LogoutIcon from '@mui/icons-material/Logout';
+import { useNavigate } from "react-router-dom";
 
 export default function MenuNavigation() {
+  const navigate = useNavigate()
+
   return (
     <Stack
       width="19rem"
@@ -24,6 +27,7 @@ export default function MenuNavigation() {
          marginTop: '5rem'
       }}>
       <Stack
+        onClick={() => navigate('/dashboard')}
         sx={{
           display: "flex",
           flexDirection: "row",
@@ -37,6 +41,7 @@ export default function MenuNavigation() {
         <Typography ml={1}>Dashboard</Typography>
       </Stack>
       <Stack
+        onClick={() => navigate('/listDevice')}
         sx={{
           display: "flex",
           flexDirection: "row",
@@ -50,6 +55,7 @@ export default function MenuNavigation() {
         <Typography ml={1}>Dispositivos</Typography>
       </Stack>
       <Stack
+        onClick={() => navigate('/')}
         sx={{
           display: "flex",
           flexDirection: "row",

@@ -11,6 +11,7 @@ import { Stack } from "@mui/material";
 // Pages
 import Login from "@pages/Login/Login";
 import Dashboard from "@pages/Dashboard/Dashboard";
+import ListDevices from "@pages/ListDevices/ListDevices";
 
 // Components
 import Header from "@components/Header/Header";
@@ -50,6 +51,7 @@ function ProtectedRoutes() {
           {!isMobile && <MenuNavigation />}
           <Routes>
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/listDevice" element={<ListDevices />} />
           </Routes>
         </Stack>
       </Stack>
