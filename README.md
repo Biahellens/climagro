@@ -21,9 +21,50 @@ Para o desenvolvimento deste projeto, foi utilizado as seguintes tecnologias:
 - [React-Router-dom](https://reactrouter.com/en/main);
 - [Styled-components](https://styled-components.com/);
 - [Material-UI](https://mui.com/material-ui/getting-started/);
+- [Typeorm](https://typeorm.io/);
+- [Express](https://expressjs.com/pt-br/);
+- [jsonwebtoken](https://jwt.io/);
+- [PostgreSQL](https://www.postgresql.org/);
+- [Docker](https://www.docker.com/).
 
 
 ## Inicializando
+
+### Banco de dados:
+
+O desenvolvimento do nosso banco de dados em Postgres utilizamos da imagem do Postgres a partir do docker, que ficará disponivel na porta 5432. Para iniciar nosso banco de dados o primeiro passo é acessar a nossa pasta api e database:
+
+```bash
+$ cd server/database
+```
+
+Em seguida precisamos iniciar o container do PostgreSQL:
+
+```bash
+$ docker-compose up -d
+```
+
+agora precisamos criar nossas migrations no banco de dados:
+
+```bash
+$ cd ..
+$ npm run migration:run
+```
+
+### Server:
+
+A nossa Server foi construida utilizando o Node.js utilizando Express e TypeScript, e o TypeORM. Utilizei também do bycript para a encriptação de senhas. Antes de iniciar, precisa-se instalar as dependências, para isso utilizamos o npm como nosso gerenciador de dependencias e excutamos o seguinte comando no terminal:
+
+```bash
+$ cd server
+$ npm install
+```
+
+agora, podemos estar inicializando com através do comando:
+
+```bash
+$ npm run dev
+```
 
 ### Iniciando o Front-end:
 
@@ -45,5 +86,12 @@ $ npm run dev
 
 Agora com a aplicação configurada é possível acessar a mesma através da seguinte URL para ver se esta tudo certo:
 
+Front-end
 - http://localhost:5173/
+
+Back-end
+- http://localhost:3000/
+
+Banco de dados
+- http://localhost:5432/
 
