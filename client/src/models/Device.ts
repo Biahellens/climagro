@@ -1,10 +1,10 @@
 export interface Device {
   id: number,
   name: string,
-  listCommands?: Command[]
+  listCommands: Command[]
 }
 
-export interface Command {
+export type Command = {
   id: number;
   name: string;
   url: string;

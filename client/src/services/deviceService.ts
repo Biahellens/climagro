@@ -55,4 +55,21 @@ export const DeviceService = {
       throw new Error("Não foi possível obter os dispositivos");
     }
   },
+  GetByUserId: async () => {
+    try {
+      const API_URL = `${baseUrlApi}/device/getDevicesByUser`;
+      const httpHeaders = {
+        "Content-Type": "application/json",
+      };
+      const response = await axios.get(API_URL, {
+        headers: httpHeaders,
+      });
+
+      if (response) {
+        return response.data;
+      }
+    } catch (error) {
+      throw new Error("Erro ao obter dispositivos");
+    }
+  },
 };
