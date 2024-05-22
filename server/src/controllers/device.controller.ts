@@ -1,17 +1,10 @@
 import { Request, Response } from 'express';
-import { IsNull, getRepository } from 'typeorm';
+import { getRepository } from 'typeorm';
 import { Device } from '../entities/Device';
 import { User } from '../entities/User';
 
 interface AuthenticatedRequest extends Request {
   currentUser?: User;
-}
-
-interface Command {
-  id: number;
-  userId: number;
-  name: string;
-  url: string;
 }
 
 export class DeviceController {
@@ -60,7 +53,11 @@ export class DeviceController {
         const deviceId = req.params.id;
         const { listCommands } = req.body;
 
-        const device = await deviceRepository.findOne(deviceId);
+        const device = await deviceRepository.findOne({
+          where: {
+            id: parseInt(deviceId),
+          },
+        });
 
         if (!device) {
             return res.status(404).json({ error: "Dispositivo não encontrado" });
@@ -110,15 +107,12 @@ export class DeviceController {
         return res.status(401).json({ message: 'Usuário não autenticado' });
       }
 
-      const authenticatedUser: User = req.currentUser;
       const deviceId = req.params.id;
 
       const deviceRepository = getRepository(Device);
       const device = await deviceRepository.findOne({
         where: {
-          id: deviceId,
-          user: { id: authenticatedUser.id },
-          deleted_at: IsNull(),
+          id: parseInt(deviceId),
         },
       });
 
@@ -126,7 +120,6 @@ export class DeviceController {
         return res.status(404).json({ message: 'Dispositivo não encontrado' });
       }
 
-      device.deleted_at = new Date();
       await deviceRepository.save(device);
 
       return res.status(200).json({ message: 'Dispositivo excluído com sucesso' });

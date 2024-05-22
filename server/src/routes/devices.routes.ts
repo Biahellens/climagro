@@ -9,7 +9,7 @@ Router.get('/allDevices', authentification, DeviceController.getAllDevices);
 Router.post('/createDevice', authentification, DeviceController.createDevice);
 Router.get('/getDevicesByUser', authentification, DeviceController.getDevicesByUser);
 Router.delete('/:id/deleted', authentification, DeviceController.deleteDevice);
-Router.put("/addCommands", authentification, DeviceController.addCommand);
+Router.put("/:id/addCommands", authentification, DeviceController.addCommand);
 
 
 export { Router as deviceRouter }
