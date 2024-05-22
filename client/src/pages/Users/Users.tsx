@@ -12,7 +12,7 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // Table
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
@@ -22,6 +22,8 @@ import { styled } from "@mui/material/styles";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useNavigate } from "react-router-dom";
+import { UserService } from "@services/userService";
+import { UserShow } from "@models/User";
 
 const StyledTableCell = styled(TableCell)(() => ({
   [`&.${tableCellClasses.head}`]: {
@@ -51,6 +53,7 @@ export default function Users() {
 
   const [page, setPage] = useState(1);
   const [rowsPerPage] = useState(6);
+  const [users, setUsers] = useState<UserShow[]>([])
 
   const handleChangePage = (
     _event: React.ChangeEvent<unknown>,
@@ -59,23 +62,17 @@ export default function Users() {
     setPage(newPage);
   };
 
-  const users = [
-    {
-      id: 1,
-      name: "Rebeca",
-      email: "rebeca@email.com",
-    },
-    {
-      id: 2,
-      name: "Carolina",
-      email: "carolina@email.com",
-    },
-    {
-      id: 3,
-      name: "Alexandre",
-      email: "alexandre@email.com",
-    },
-  ];
+  const getUsers = async () => {
+    const result = await UserService.GetAll()
+
+    if(result){
+      setUsers(result)
+    }
+  }
+
+  useEffect(() => {
+    getUsers()
+  }, []);
 
   return (
     <Stack

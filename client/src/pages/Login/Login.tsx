@@ -1,7 +1,12 @@
 import { UseMobile } from "@contexts/MobileContext";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { OutlinedInput, Stack } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
+import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { User } from "@models/User";
+import { UserContext } from "@contexts/userContext/UserContext";
 
 // Icons
 import CircularProgress from "@mui/material/CircularProgress";
@@ -9,7 +14,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 // Imgs
 import bg_green from "@assets/green_infos.png";
 import icon_climagro from "@assets/icon_climagro.svg";
-import { useNavigate } from "react-router-dom";
+
 
 export default function Login() {
   const { isMobile } = UseMobile();
@@ -19,14 +24,30 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const { handleLogin } = useContext(UserContext);
+
   const login = async () => {
-    setLoading(true);
-
-    navigate('/dashboard')
-
-    setTimeout(() => {
+    if (email == "" || password == "") {
+      toast.warn("Favor preencher todos os campos antes de prosseguir");
+      return;
+    }
+    try {
+      setLoading(true);
+      const user: User | undefined | null = await handleLogin(
+        email,
+        password
+      );
+      if (user) {
+        console.log("USUARIO");
+        console.log(user);
+        navigate("/dashboard");
+      }
+    } catch (err) {
+      toast.error("Usuário ou senha incorreto!");
+      return;
+    } finally {
       setLoading(false);
-    }, 100);
+    }
   };
 
   return (
@@ -117,6 +138,7 @@ export default function Login() {
           }}
         />
       }
+      <ToastContainer />
     </Stack>
   );
 }

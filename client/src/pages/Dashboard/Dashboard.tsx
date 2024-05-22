@@ -13,7 +13,7 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 // Table
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
@@ -21,6 +21,9 @@ import { styled } from "@mui/material/styles";
 
 // Icons
 import ClearIcon from "@mui/icons-material/Clear";
+import { UserContext } from "@contexts/userContext/UserContext";
+import { Device } from "@models/Device";
+import { DeviceService } from "@services/deviceService";
 
 type DevicePages = {
   [deviceId: string]: number;
@@ -50,19 +53,23 @@ const StyledTableRow = styled(TableRow)(() => ({
 export default function Dashboard() {
   const { isMobile } = UseMobile();
 
+  const [devices, setDevices] = useState<Device[]>([])
+  const { user } = useContext(UserContext)
+  const userId = user
+
   const [rowsPerPage] = useState(3);
   const [devicePages, setDevicePages] = useState<DevicePages>({});
-  const [selectedCommand, setSelectedCommand] = useState<string | null>(null);
+  const [selectedCommand, setSelectedCommand] = useState<number | null>(null);
   const [openModal, setOpenModal] = useState(false);
 
-  const handleChangePage = (deviceId: string, newPage: number) => {
+  const handleChangePage = (deviceId: number, newPage: number) => {
     setDevicePages((prevState: any) => ({
       ...prevState,
       [deviceId]: newPage,
     }));
   };
 
-  const handleCommandClick = (commandId: string) => {
+  const handleCommandClick = (commandId: number) => {
     setSelectedCommand(commandId);
     setOpenModal(true);
   };
@@ -72,38 +79,19 @@ export default function Dashboard() {
     setSelectedCommand(null);
   };
 
-  const devices = [
-    {
-      id: "1",
-      name: "Dispositivo x",
-      commands: [
-        { id: "1_1", name: "Comando 1", url: "teste" },
-        { id: "1_2", name: "Comando 2", url: "teste" },
-        { id: "1_3", name: "Comando 3", url: "teste" },
-        { id: "1_4", name: "Comando 4", url: "teste" },
-      ],
-    },
-    {
-      id: "2",
-      name: "Dispositivo y",
-      commands: [
-        { id: "2_1", name: "Comando 1", url: "teste" },
-        { id: "2_2", name: "Comando 2", url: "teste" },
-        { id: "2_3", name: "Comando 3", url: "teste" },
-        { id: "2_4", name: "Comando 4", url: "teste" },
-      ],
-    },
-    {
-      id: "3",
-      name: "Dispositivo z",
-      commands: [
-        { id: "3_1", name: "Comando 1", url: "teste" },
-        { id: "3_2", name: "Comando 2", url: "teste" },
-        { id: "3_3", name: "Comando 3", url: "teste" },
-        { id: "3_4", name: "Comando 4", url: "teste" },
-      ],
-    },
-  ];
+  const getDevices = async () => {
+    if(!userId){
+      const result = await DeviceService.GetByUserId()
+
+      if(result){
+        setDevices(result)
+      }
+    }
+  }
+
+  useEffect(() => {
+    getDevices()
+  }, []);
 
   return (
     <Stack width="100vw" height={isMobile ? "100%" : "100vh"} padding="2rem">
@@ -174,31 +162,35 @@ export default function Dashboard() {
                   marginTop: "1rem",
                 }}
               >
-                {row.commands
-                  .slice(
-                    (devicePages[row.id] || 1) * rowsPerPage - rowsPerPage,
-                    (devicePages[row.id] || 1) * rowsPerPage
-                  )
-                  .map((row) => (
-                    <Button
-                      onClick={() => handleCommandClick(row.id)}
-                      key={row.id}
-                      sx={{
-                        background: "#808080",
-                        width: "80%",
-                        color: "#FFFFFF",
-                        fontWeight: 400,
-                        margin: "0.5rem",
-                        "&:hover": {
-                          background: "#DCDCDC",
-                          color: "#000000",
-                          fontWeight: 500,
-                        },
-                      }}
-                    >
-                      {row.name}
-                    </Button>
-                  ))}
+                {row.listCommands !== undefined &&
+                  <>
+                    {row.listCommands
+                      .slice(
+                        (devicePages[row.id] || 1) * rowsPerPage - rowsPerPage,
+                        (devicePages[row.id] || 1) * rowsPerPage
+                      )
+                      .map((row) => (
+                        <Button
+                          onClick={() => handleCommandClick(row.id)}
+                          key={row.id}
+                          sx={{
+                            background: "#808080",
+                            width: "80%",
+                            color: "#FFFFFF",
+                            fontWeight: 400,
+                            margin: "0.5rem",
+                            "&:hover": {
+                              background: "#DCDCDC",
+                              color: "#000000",
+                              fontWeight: 500,
+                            },
+                          }}
+                        >
+                          {row.name}
+                        </Button>
+                      ))}
+                  </>
+                }
               </Stack>
               <Stack
                 mt={2}
@@ -208,19 +200,21 @@ export default function Dashboard() {
                   alignItems: "center",
                 }}
               >
-                <Pagination
-                  count={Math.ceil(row.commands.length / rowsPerPage)}
-                  page={devicePages[row.id] || 1}
-                  onChange={(_event, page) => handleChangePage(row.id, page)}
-                  sx={{
-                    alignItems: "end !important",
-                    "& .Mui-selected": {
-                      backgroundColor: "#556B2F !important",
-                      color: "#fff",
-                    },
-                  }}
-                  size="small"
-                />
+                {(row.listCommands !== undefined && row.listCommands.length > 1 ) &&
+                  <Pagination
+                    count={Math.ceil(row.listCommands.length / rowsPerPage)}
+                    page={devicePages[row.id] || 1}
+                    onChange={(_event, page) => handleChangePage(row.id, page)}
+                    sx={{
+                      alignItems: "end !important",
+                      "& .Mui-selected": {
+                        backgroundColor: "#556B2F !important",
+                        color: "#fff",
+                      },
+                    }}
+                    size="small"
+                  />
+                }
               </Stack>
             </Stack>
           </Stack>
