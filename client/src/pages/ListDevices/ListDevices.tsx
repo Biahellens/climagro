@@ -14,7 +14,7 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // Table
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
@@ -26,6 +26,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import { Command } from "@models/Command";
 import { ModalNewDevice } from "@pages/NewDevice/NewDevice";
+import { DeviceService } from "@services/deviceService";
+import { Device } from "@models/Device";
 
 const StyledTableCell = styled(TableCell)(() => ({
   [`&.${tableCellClasses.head}`]: {
@@ -51,9 +53,10 @@ const StyledTableRow = styled(TableRow)(() => ({
 export default function ListDevices() {
   const { isMobile } = UseMobile();
 
+  const [devices, setDevices] = useState<Device[]>([])
   const [page, setPage] = useState(1);
   const [rowsPerPage] = useState(6);
-  const [selectedDevice, setSelectedDevice] = useState<string | null>(null);
+  const [selectedDevice, setSelectedDevice] = useState<number | null>(null);
   const [openModal, setOpenModal] = useState(false);
   const [openModalNewDevice, setOpenModalNewDevice] = useState(false);
 
@@ -94,7 +97,7 @@ export default function ListDevices() {
     setPage(newPage);
   };
 
-  const handleDeviceClick = (deviceId: string) => {
+  const handleDeviceClick = (deviceId: number) => {
     setSelectedDevice(deviceId);
     setOpenModal(true);
   };
@@ -112,20 +115,18 @@ export default function ListDevices() {
     setOpenModalNewDevice(false);
   };
 
-  const devices = [
-    {
-      id: "1",
-      name: "Dispositivo x",
-    },
-    {
-      id: "2",
-      name: "Dispositivo y",
-    },
-    {
-      id: "3",
-      name: "Dispositivo z",
-    },
-  ];
+  const getDevices = async () => {
+    const result = await DeviceService.GetAll()
+
+    if(result){
+      setDevices(result)
+    }
+  }
+
+  useEffect(() => {
+    getDevices()
+  }, []);
+
 
   return (
     <Stack
