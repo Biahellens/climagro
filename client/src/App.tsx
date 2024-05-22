@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 import { UseMobile } from "@contexts/MobileContext";
 import { Stack } from "@mui/material";
+import "react-toastify/dist/ReactToastify.css";
 
 // Pages
 import Login from "@pages/Login/Login";
