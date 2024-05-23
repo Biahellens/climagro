@@ -81,13 +81,10 @@ export default function Dashboard() {
   };
 
   const getDevices = async () => {
-    console.log("oooi", userId);
     if (userId) {
-      console.log("oooi ---");
       try {
         const result = await DeviceService.GetByUserId();
         if (result) {
-          console.log("oooi ---", result);
           setDevices(result);
         }
       } catch (error) {
