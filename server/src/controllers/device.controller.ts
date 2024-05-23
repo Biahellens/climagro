@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
-import { getRepository } from 'typeorm';
+import { Equal, getRepository } from 'typeorm';
 import { Device } from '../entities/Device';
 import { User } from '../entities/User';
+import { Command } from '../entities/Command';
 
 interface AuthenticatedRequest extends Request {
   currentUser?: User;
@@ -42,92 +43,87 @@ export class DeviceController {
 
   static async addCommand(req: AuthenticatedRequest, res: Response) {
     const deviceRepository = getRepository(Device);
+    const commandRepository = getRepository(Command);
+
+    try {
+      if (!req.currentUser) {
+        console.log('Usuário não autenticado');
+        return res.status(401).json({ message: 'Usuário não autenticado' });
+      }
+
+      const { id, listCommands } = req.body;
+      const authenticatedUser: User = req.currentUser;
+
+      const device = await deviceRepository.findOne({
+        where: { id: id },
+      });
+
+      if (!device) {
+        console.log('Dispositivo não encontrado');
+        return res.status(404).json({ error: "Dispositivo não encontrado" });
+      }
+
+      const newCommands = listCommands.map((cmd: { name: string; url: string }) => {
+        const command = new Command();
+        command.name = cmd.name;
+        command.url = cmd.url;
+        command.device = device;
+        command.user = authenticatedUser;
+        return command;
+      });
+
+      const savedCommands = await commandRepository.save(newCommands);
+
+      const simplifiedCommands = savedCommands.map((command: Command) => ({
+        id: command.id,
+        name: command.name,
+        url: command.url,
+        deviceId: device.id,
+        userId: authenticatedUser.id,
+      }));
+
+      return res.status(200).json(simplifiedCommands);
+    } catch (error) {
+      console.error('Erro ao adicionar comando:', error);
+      return res.status(500).json({ error: "Erro interno do servidor" });
+    }
+  }
+
+  static async getDevicesByUser(req: AuthenticatedRequest, res: Response) {
+    const commandRepository = getRepository(Command);
     try {
         if (!req.currentUser) {
-            console.log('Usuário não autenticado');
             return res.status(401).json({ message: 'Usuário não autenticado' });
         }
 
-        const { id, listCommands } = req.body;
+        const authenticatedUser: User = req.currentUser;
 
-        console.log('ID do dispositivo:', id);
-        console.log('Comandos recebidos:', listCommands);
+        console.log('ID do usuário autenticado:', authenticatedUser.id);
 
-        const device = await deviceRepository.findOne({
+        const commands = await commandRepository.find({
             where: {
-                id: id,
+                user: Equal(authenticatedUser.id)
             },
+            relations: ['device', 'user']
         });
 
-        if (!device) {
-            console.log('Dispositivo não encontrado');
-            return res.status(404).json({ error: "Dispositivo não encontrado" });
-        }
+        console.log('Comandos encontrados:', commands);
 
-        if (!device.listCommands) {
-            device.listCommands = [];
-        }
-
-        const newCommands = listCommands.map((cmd: { name: string; url: string; }) => ({
-            name: cmd.name,
-            url: cmd.url,
+        const serializedCommands = commands.map(command => ({
+            id: command.id,
+            name: command.name,
+            url: command.url,
+            deviceId: command.device.id,
+            userId: command.user.id
         }));
 
-        console.log('Novos comandos:', newCommands);
-
-        device.listCommands = [...device.listCommands, ...newCommands];
-        const updatedDevice = await deviceRepository.save(device);
-
-        console.log('Dispositivo atualizado:', updatedDevice);
-
-        const responseObject = {
-            id: updatedDevice.id,
-            name: updatedDevice.name,
-            listCommands: updatedDevice.listCommands.map(command => ({
-                name: command.name,
-                url: command.url
-            }))
-        };
-
-        return res.status(200).json(responseObject);
+        return res.status(200).json(serializedCommands);
     } catch (error) {
-        console.error('Erro ao adicionar comando:', error);
-        return res.status(500).json({ error: "Erro interno do servidor" });
+        console.error('Erro ao obter dispositivos do usuário:', error);
+        return res.status(500).json({ message: 'Erro interno do servidor' });
     }
-}
-
-  static async getDevicesByUser(req: AuthenticatedRequest, res: Response) {
-    try {
-      if (!req.currentUser) {
-          return res.status(401).json({ message: 'Usuário não autenticado' });
-      }
-
-      const authenticatedUser: User = req.currentUser;
-
-      const device = await getRepository(Device)
-          .createQueryBuilder("device")
-          .leftJoinAndSelect("device.listCommands", "command")
-          .where("command.userId = :userId", { userId: authenticatedUser.id })
-          .getOne();
-
-      if (!device) {
-          return res.status(404).json({ message: 'Nenhum dispositivo encontrado para este usuário' });
-      }
-
-      const firstCommand = device.listCommands[0]; 
-      if (!firstCommand) {
-          return res.status(404).json({ message: 'Nenhum comando encontrado para este dispositivo' });
-      }
-
-      const firstCommandUserId = firstCommand.user.id;
-
-      console.info("ID do usuário associado ao primeiro comando:", firstCommandUserId);
-      return res.status(200).json({ userId: firstCommandUserId });
-  } catch (error) {
-      console.error('Erro ao obter ID do usuário do primeiro comando:', error);
-      return res.status(500).json({ message: 'Erro interno do servidor' });
   }
-  }
+
 
   static async deleteDevice(req: AuthenticatedRequest, res: Response) {
     try {

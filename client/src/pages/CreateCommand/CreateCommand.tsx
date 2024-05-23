@@ -3,7 +3,7 @@ import { UseMobile } from "@contexts/MobileContext";
 import { Command, Device } from "@models/Device";
 import { Button, IconButton, Modal, OutlinedInput, Stack, Typography } from "@mui/material";
 import { DeviceService } from "@services/deviceService";
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -11,7 +11,6 @@ import "react-toastify/dist/ReactToastify.css";
 import ClearIcon from "@mui/icons-material/Clear";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
-import { UserContext } from "@contexts/userContext/UserContext";
 
 export const ModalNewCommands = ({
   openModal,
@@ -23,9 +22,6 @@ export const ModalNewCommands = ({
   selectedDevice: string
 }) => {
   const { isMobile } = UseMobile();
-
-  const { user } = useContext(UserContext)
-  const userId = user ? user.id : null;
 
   const [newDevice, setNewDevice] = useState({
     id: "",
@@ -56,7 +52,7 @@ export const ModalNewCommands = ({
       id: "",
       name: "",
       url: "",
-      userId: userId
+      userId: ""
     };
     setFormDataCommands([...formDataCommands, newCommand]);
   };
@@ -90,9 +86,9 @@ export const ModalNewCommands = ({
     };
 
     try {
-      console.log(deviceBody)
-      await DeviceService.AddCommand(selectedDevice, deviceBody)
+      const de = await DeviceService.AddCommand(selectedDevice, deviceBody)
 
+      console.log(de)
       toast.success("Comandos criados com sucesso!", {
         style: {
           backgroundColor: "#55B938",
