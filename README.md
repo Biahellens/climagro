@@ -82,6 +82,8 @@ Em seguida já podemos inicializar o projeto:
 $ npm run dev
 ```
 
+-> No momento as funcionalidades de edit e delete device da lista de dispositivos não estão funcionando.
+
 ### Executando a aplicação
 
 Agora com a aplicação configurada é possível acessar a mesma através da seguinte URL para ver se esta tudo certo:
