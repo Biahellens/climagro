@@ -72,6 +72,7 @@ export const DeviceService = {
       throw new Error("Erro ao obter dispositivos");
     }
   },
+  
   GetById: async (deviceId: number) => {
     try {
       const API_URL = `${baseUrlApi}/devices/getById/${deviceId}`;

@@ -1,20 +1,14 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
+import { Command } from "./Command";
 
-class Command {
-    id: number;
-    userId: number;
-    name: string;
-    url: string;
-}
-
-@Entity()
+@Entity({ name: 'device' })
 export class Device {
-    @PrimaryGeneratedColumn()
-    id: number;
+    @PrimaryGeneratedColumn("uuid")
+    id: string;
 
     @Column()
     name: string;
 
-    @Column("simple-json")
+    @OneToMany(() => Command, command => command.device)
     listCommands: Command[];
 }

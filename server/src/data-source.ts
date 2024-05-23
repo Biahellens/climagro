@@ -3,6 +3,7 @@ import 'reflect-metadata';
 import { createConnection, ConnectionOptions, Connection } from 'typeorm';
 import { Device } from './entities/Device';
 import { User } from './entities/User';
+import { Command } from './entities/Command';
 
 const port = process.env.DATABASE_PORT as number | undefined;
 
@@ -13,7 +14,7 @@ const connectionOptions: ConnectionOptions = {
   username: process.env.DATABASE_USER,
   password: process.env.DATABASE_PASSWORD,
   database: process.env.DATABASE_DB,
-  entities: [User, Device],
+  entities: [User, Device, Command],
   migrations: [`${__dirname}/**/migrations/*.{ts,js}`],
 };
 

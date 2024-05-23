@@ -55,7 +55,7 @@ export class DeviceController {
 
         const device = await deviceRepository.findOne({
           where: {
-            id: parseInt(deviceId),
+            id: deviceId,
           },
         });
 
@@ -81,23 +81,23 @@ export class DeviceController {
 
   static async getDevicesByUser(req: AuthenticatedRequest, res: Response) {
     try {
-      if (!req.currentUser) {
-        return res.status(401).json({ message: 'Usuário não autenticado' });
-      }
+        if (!req.currentUser) {
+            return res.status(401).json({ message: 'Usuário não autenticado' });
+        }
 
-      const deviceRepository = getRepository(Device);
-      const authenticatedUser: User = req.currentUser;
+        const authenticatedUser: User = req.currentUser;
 
-      const devices = await deviceRepository.createQueryBuilder("device")
-          .leftJoinAndSelect("device.listCommands", "command")
-          .where("command.userId = :userId", { userId: { id: authenticatedUser.id} })
-          .getMany();
+        const devices = await getRepository(Device)
+            .createQueryBuilder("device")
+            .leftJoinAndSelect("device.listCommands", "command")
+            .where("device.userId = :userId", { userId: authenticatedUser.id })
+            .getMany();
 
-      console.info(devices)
-      return res.status(200).json(devices);
+        console.info(devices);
+        return res.status(200).json(devices);
     } catch (error) {
-      console.error('Erro ao obter dispositivos do usuário:', error);
-      return res.status(500).json({ message: 'Erro interno do servidor'});
+        console.error('Erro ao obter dispositivos do usuário:', error);
+        return res.status(500).json({ message: 'Erro interno do servidor' });
     }
   }
 
@@ -112,7 +112,7 @@ export class DeviceController {
       const deviceRepository = getRepository(Device);
       const device = await deviceRepository.findOne({
         where: {
-          id: parseInt(deviceId),
+          id: deviceId,
         },
       });
 
@@ -128,6 +128,31 @@ export class DeviceController {
       return res.status(500).json({ message: 'Erro interno do servidor' });
     }
   }
+  static async getById(req: AuthenticatedRequest, res: Response) {
+    try {
+      if (!req.currentUser) {
+        return res.status(401).json({ message: 'Usuário não autenticado' });
+      }
+
+      const { id } = req.params;
+
+      const device = await getRepository(Device).findOne({
+        where: {
+          id: id,
+        },
+      });
+
+      if (!device) {
+        return res.status(404).json({ message: 'Dispositivo não encontrado' });
+      }
+
+      return res.status(200).json({ device });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: 'Erro interno do servidor' });
+    }
+  }
+
 
   static async getAllDevices(req: AuthenticatedRequest, res: Response) {
     try {

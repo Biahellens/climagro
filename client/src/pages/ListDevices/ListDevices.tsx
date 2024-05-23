@@ -46,7 +46,7 @@ const StyledTableRow = styled(TableRow)(() => ({
 export default function ListDevices() {
   const { isMobile } = UseMobile();
 
-  const [devices, setDevices] = useState<Device[]>([])
+  const [devices, setDevices] = useState<Device[]>([]);
   const [page, setPage] = useState(1);
   const [rowsPerPage] = useState(6);
   const [selectedDevice, setSelectedDevice] = useState<number>(0);
@@ -79,17 +79,17 @@ export default function ListDevices() {
   };
 
   const getDevices = async () => {
-    const result = await DeviceService.GetAll()
-
-    if(result){
-      setDevices(result)
+    const result = await DeviceService.GetAll();
+    console.log(result);
+    if (result) {
+      setDevices(result.devices);
+      console.log(devices)
     }
-  }
+  };
 
   useEffect(() => {
-    getDevices()
+    getDevices();
   }, []);
-
 
   return (
     <Stack
@@ -130,7 +130,7 @@ export default function ListDevices() {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          marginTop: isMobile ? '2rem' :"10rem",
+          marginTop: isMobile ? "2rem" : "10rem",
           marginBottom: isMobile ? "2rem" : 0,
         }}
       >
@@ -155,7 +155,34 @@ export default function ListDevices() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {devices.map((row) => (
+                  {devices.length > 0 ? (
+                    <>
+                      {devices.map((row) => (
+                        <StyledTableRow
+                          sx={{
+                            "&:hover": {
+                              outline: "2px solid",
+                              outlineColor: "#C0C0C0",
+                              backgroundColor: "#C0C0C0",
+                            },
+                          }}
+                          onClick={() => handleDeviceClick(row.id)}
+                        >
+                          <StyledTableCell
+                            component="th"
+                            scope="row"
+                            size="small"
+                          >
+                            {row.id}
+                          </StyledTableCell>
+                          <StyledTableCell size="small">
+                            {row.name}
+                          </StyledTableCell>
+                          <StyledTableCell size="small"></StyledTableCell>
+                        </StyledTableRow>
+                      ))}
+                    </>
+                  ) : (
                     <StyledTableRow
                       sx={{
                         "&:hover": {
@@ -164,39 +191,52 @@ export default function ListDevices() {
                           backgroundColor: "#C0C0C0",
                         },
                       }}
-                      onClick={() => handleDeviceClick(row.id)}
                     >
-                      <StyledTableCell component="th" scope="row" size="small">
-                        {row.id}
-                      </StyledTableCell>
-                      <StyledTableCell size="small">{row.name}</StyledTableCell>
-                      <StyledTableCell size="small">resposta</StyledTableCell>
+                      <StyledTableCell
+                        component="th"
+                        scope="row"
+                        size="small"
+                      ></StyledTableCell>
+                      <StyledTableCell size="small"></StyledTableCell>
+                      <StyledTableCell size="small"></StyledTableCell>
                     </StyledTableRow>
-                  ))}
+                  )}
                 </TableBody>
               </Table>
             </TableContainer>
           </Stack>
         )}
         {isMobile && (
-          <Stack width='100%'>
-            {devices.map((row) => (
-              <Stack key={row.id} width='100%' height='5rem' sx={{
-                border: '2px solid #696969',
-                borderRadius: '0.5rem',
-                justifyContent: 'center',
-                alignItems: 'center',
-                padding: '1rem',
-                marginTop: '1.5rem'
-              }}>
-                <Stack width='100%' flexDirection='row'>
-                  <Typography mr='0.5rem'>id:</Typography><Typography>{row.id}</Typography>
-                </Stack>
-                <Stack width='100%' flexDirection='row'>
-                <Typography mr='0.5rem'>Dispositivo:</Typography><Typography>{row.name}</Typography>
-                </Stack>
-              </Stack>
-            ))}
+          <Stack width="100%">
+            {devices.length > 0 && (
+              <>
+                {devices.map((row) => (
+                  <Stack
+                    key={row.id}
+                    width="100%"
+                    height="5rem"
+                    sx={{
+                      border: "2px solid #696969",
+                      borderRadius: "0.5rem",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      padding: "1rem",
+                      marginTop: "1.5rem",
+                    }}
+                  >
+                    <Stack width="100%" flexDirection="row">
+                      <Typography mr="0.5rem">id:</Typography>
+                      <Typography>{row.id}</Typography>
+                    </Stack>
+                    <Stack width="100%" flexDirection="row">
+                      <Typography mr="0.5rem">Dispositivo:</Typography>
+                      <Typography>{row.name}</Typography>
+                      <Typography></Typography>
+                    </Stack>
+                  </Stack>
+                ))}
+              </>
+            )}
           </Stack>
         )}
       </Stack>

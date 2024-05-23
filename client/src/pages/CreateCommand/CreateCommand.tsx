@@ -30,16 +30,21 @@ export const ModalNewCommands = ({
   });
 
   const getDevice = async () => {
-    const result = await DeviceService.GetById(selectedDevice)
+    if(openModal === true){
+      const result = await DeviceService.GetById(selectedDevice)
 
-    if(result){
-      setNewDevice(result)
+      if(result){
+        console.log('device', result)
+        setNewDevice(result)
+      }
     }
   }
 
   useEffect(() => {
-    getDevice()
-  }, []);
+    if(openModal === true){
+      getDevice()
+    }
+  }, [openModal]);
 
   const [formDataCommands, setFormDataCommands] = useState<Command[]>([]);
 
@@ -81,7 +86,8 @@ export const ModalNewCommands = ({
     };
 
     try {
-      await DeviceService.Post(deviceBody)
+      console.log(deviceBody)
+      await DeviceService.AddCommand(selectedDevice, deviceBody)
 
       toast.success("Comandos criados com sucesso!", {
         style: {
@@ -165,7 +171,7 @@ export const ModalNewCommands = ({
             <Stack>
               {formDataCommands.map((command, index) => (
                 <>
-                  <Stack mt="2rem" width="100%">
+                  <Stack key={index} mt="2rem" width="100%">
                     <Typography>Comando nº {index + 1}</Typography>
                   </Stack>
                   <Stack
