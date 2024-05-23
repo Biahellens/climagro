@@ -79,6 +79,7 @@ export class DeviceController {
     }
   }
 
+
   static async getDevicesByUser(req: AuthenticatedRequest, res: Response) {
     try {
         if (!req.currentUser) {
@@ -90,7 +91,7 @@ export class DeviceController {
         const devices = await getRepository(Device)
             .createQueryBuilder("device")
             .leftJoinAndSelect("device.listCommands", "command")
-            .where("device.userId = :userId", { userId: authenticatedUser.id })
+            .where("command.userId = :userId", { userId: authenticatedUser.id })
             .getMany();
 
         console.info(devices);
