@@ -1,10 +1,10 @@
 export type User = {
-  id: null | number,
+  id: null | string,
   email: string,
   password: string
 }
 
 export type UserShow = {
-  id: null | number,
+  id: null | string,
   email: string,
 }

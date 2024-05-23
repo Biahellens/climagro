@@ -43,41 +43,59 @@ export class DeviceController {
   static async addCommand(req: AuthenticatedRequest, res: Response) {
     const deviceRepository = getRepository(Device);
     try {
-
         if (!req.currentUser) {
-          return res.status(401).json({ message: 'Usuário não autenticado' });
+            console.log('Usuário não autenticado');
+            return res.status(401).json({ message: 'Usuário não autenticado' });
         }
 
-        const authenticatedUser: User = req.currentUser;
+        const { id, listCommands } = req.body;
 
-        const deviceId = req.params.id;
-        const { listCommands } = req.body;
+        console.log('ID do dispositivo:', id);
+        console.log('Comandos recebidos:', listCommands);
 
         const device = await deviceRepository.findOne({
-          where: {
-            id: deviceId,
-          },
+            where: {
+                id: id,
+            },
         });
 
         if (!device) {
+            console.log('Dispositivo não encontrado');
             return res.status(404).json({ error: "Dispositivo não encontrado" });
         }
 
-        const newCommands = listCommands.map((cmd: { userId: number; name: string; url: string; }, index: number) => ({
-          id: Math.max(0, ...device.listCommands.map((cmd: { id: number; }) => cmd.id)) + index + 1,
-          userId: { id: authenticatedUser.id },
-          name: cmd.name,
-          url: cmd.url
+        if (!device.listCommands) {
+            device.listCommands = [];
+        }
+
+        const newCommands = listCommands.map((cmd: { name: string; url: string; }) => ({
+            name: cmd.name,
+            url: cmd.url,
         }));
+
+        console.log('Novos comandos:', newCommands);
 
         device.listCommands = [...device.listCommands, ...newCommands];
         const updatedDevice = await deviceRepository.save(device);
 
-        return res.status(200).json(updatedDevice);
+        console.log('Dispositivo atualizado:', updatedDevice);
+
+        const responseObject = {
+            id: updatedDevice.id,
+            name: updatedDevice.name,
+            listCommands: updatedDevice.listCommands.map(command => ({
+                name: command.name,
+                url: command.url
+            }))
+        };
+
+        return res.status(200).json(responseObject);
     } catch (error) {
+        console.error('Erro ao adicionar comando:', error);
         return res.status(500).json({ error: "Erro interno do servidor" });
     }
-  }
+}
+
 
 
   static async getDevicesByUser(req: AuthenticatedRequest, res: Response) {
@@ -129,6 +147,7 @@ export class DeviceController {
       return res.status(500).json({ message: 'Erro interno do servidor' });
     }
   }
+
   static async getById(req: AuthenticatedRequest, res: Response) {
     try {
       if (!req.currentUser) {
@@ -147,13 +166,12 @@ export class DeviceController {
         return res.status(404).json({ message: 'Dispositivo não encontrado' });
       }
 
-      return res.status(200).json({ device });
+      return res.status(200).json(device)
     } catch (error) {
       console.error(error);
       return res.status(500).json({ message: 'Erro interno do servidor' });
     }
   }
-
 
   static async getAllDevices(req: AuthenticatedRequest, res: Response) {
     try {

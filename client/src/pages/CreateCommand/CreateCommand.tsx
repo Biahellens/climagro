@@ -19,38 +19,37 @@ export const ModalNewCommands = ({
 }: {
   openModal: boolean;
   handleCloseModal: () => void;
-  selectedDevice: number
+  selectedDevice: string
 }) => {
   const { isMobile } = UseMobile();
 
   const [newDevice, setNewDevice] = useState({
-    id: 0,
+    id: "",
     name: "",
     listCommands: [],
   });
 
   const getDevice = async () => {
-    if(openModal === true){
+    if(openModal === true && selectedDevice.length > 1){
       const result = await DeviceService.GetById(selectedDevice)
 
       if(result){
-        console.log('device', result)
         setNewDevice(result)
       }
     }
   }
 
   useEffect(() => {
-    if(openModal === true){
+    if(openModal === true && selectedDevice.length > 1){
       getDevice()
     }
-  }, [openModal]);
+  }, [openModal, selectedDevice]);
 
   const [formDataCommands, setFormDataCommands] = useState<Command[]>([]);
 
   const handleAddCommand = () => {
     const newCommand = {
-      id: 0,
+      id: "",
       name: "",
       url: "",
     };
@@ -102,7 +101,7 @@ export const ModalNewCommands = ({
       }, 1500);
 
       setNewDevice({
-        id: 0,
+        id: "",
         name: "",
         listCommands: [],
       });

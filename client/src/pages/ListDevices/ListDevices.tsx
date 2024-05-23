@@ -49,7 +49,7 @@ export default function ListDevices() {
   const [devices, setDevices] = useState<Device[]>([]);
   const [page, setPage] = useState(1);
   const [rowsPerPage] = useState(6);
-  const [selectedDevice, setSelectedDevice] = useState<number>(0);
+  const [selectedDevice, setSelectedDevice] = useState<string>("");
   const [openModal, setOpenModal] = useState(false);
   const [openModalNewDevice, setOpenModalNewDevice] = useState(false);
 
@@ -60,14 +60,14 @@ export default function ListDevices() {
     setPage(newPage);
   };
 
-  const handleDeviceClick = (deviceId: number) => {
+  const handleDeviceClick = (deviceId: string) => {
     setSelectedDevice(deviceId);
     setOpenModal(true);
   };
 
   const handleCloseModal = () => {
     setOpenModal(false);
-    setSelectedDevice(0);
+    setSelectedDevice("");
   };
 
   const handleOpenModalNewDevice = () => {

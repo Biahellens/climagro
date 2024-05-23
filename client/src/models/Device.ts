@@ -1,11 +1,11 @@
 export interface Device {
-  id: number,
+  id: string,
   name: string,
   listCommands: Command[]
 }
 
 export type Command = {
-  id: number;
+  id: string;
   name: string;
   url: string;
 }

@@ -1,5 +1,5 @@
 export interface Command {
-  id: number;
+  id: string;
   name: string;
   url: string;
 }

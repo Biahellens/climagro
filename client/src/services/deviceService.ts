@@ -25,10 +25,10 @@ export const DeviceService = {
       }
     }
   },
-  AddCommand: async (deviceId: number, device: Device) => {
+  AddCommand: async (deviceId: string, device: Device) => {
     try {
       const API_URL = `${baseUrlApi.baseUrlApi}/devices/${deviceId}/addCommands`;
-      const httpHeaders = header()
+      const httpHeaders = header();
       const response: AxiosResponse = await axios.put(API_URL, device, {
         headers: httpHeaders,
       });
@@ -55,12 +55,11 @@ export const DeviceService = {
       throw new Error("Não foi possível obter os dispositivos");
     }
   },
+
   GetByUserId: async () => {
     try {
-      const API_URL = `${baseUrlApi}/devices/getDevicesByUser`;
-      const httpHeaders = {
-        "Content-Type": "application/json",
-      };
+      const API_URL = `${baseUrlApi.baseUrlApi}/devices/getDevicesByUser`;
+      const httpHeaders = header();
       const response = await axios.get(API_URL, {
         headers: httpHeaders,
       });
@@ -72,22 +71,20 @@ export const DeviceService = {
       throw new Error("Erro ao obter dispositivos");
     }
   },
-  
-  GetById: async (deviceId: number) => {
+
+  GetById: async (deviceId: string) => {
     try {
-      const API_URL = `${baseUrlApi}/devices/getById/${deviceId}`;
-      const httpHeaders = {
-        "Content-Type": "application/json",
-      };
-      const response = await axios.get(API_URL, {
-        headers: httpHeaders,
-      });
+      const API_URL = `${baseUrlApi.baseUrlApi}/devices/${deviceId}/getById`;
+      const httpHeaders = header();
+      const response = await axios.get(API_URL, { headers: httpHeaders });
 
       if (response) {
-        return response.data;
+        return response.data
       }
     } catch (error) {
+      console.error("Erro ao obter dispositivo:", error);
       throw new Error("Erro ao obter dispositivo");
     }
-  },
+  }
+
 };

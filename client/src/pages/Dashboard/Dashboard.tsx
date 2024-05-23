@@ -24,6 +24,7 @@ import ClearIcon from "@mui/icons-material/Clear";
 import { UserContext } from "@contexts/userContext/UserContext";
 import { Device } from "@models/Device";
 import { DeviceService } from "@services/deviceService";
+import "react-toastify/dist/ReactToastify.css";
 
 type DevicePages = {
   [deviceId: string]: number;
@@ -60,17 +61,17 @@ export default function Dashboard() {
 
   const [rowsPerPage] = useState(3);
   const [devicePages, setDevicePages] = useState<DevicePages>({});
-  const [selectedCommand, setSelectedCommand] = useState<number | null>(null);
+  const [selectedCommand, setSelectedCommand] = useState<string | null>(null);
   const [openModal, setOpenModal] = useState(false);
 
-  const handleChangePage = (deviceId: number, newPage: number) => {
+  const handleChangePage = (deviceId: string, newPage: number) => {
     setDevicePages((prevState: any) => ({
       ...prevState,
       [deviceId]: newPage,
     }));
   };
 
-  const handleCommandClick = (commandId: number) => {
+  const handleCommandClick = (commandId: string) => {
     setSelectedCommand(commandId);
     setOpenModal(true);
   };
@@ -84,14 +85,18 @@ export default function Dashboard() {
     console.log('oooi', userId)
     if(!userId){
       console.log('oooi ---')
-      const result = await DeviceService.GetByUserId()
-
-      if(result){
-        setDevices(result)
-        console.log(devices)
+      try {
+        const result = await DeviceService.GetByUserId()
+        if(Array.isArray(result)){
+          setDevices(result)
+          console.log(devices)
+        }
+      } catch (error) {
+        console.error('Error fetching devices:', error)
       }
     }
   }
+
 
   useEffect(() => {
     getDevices()
@@ -120,112 +125,115 @@ export default function Dashboard() {
           marginBottom: isMobile ? '5rem' : 0
         }}
       >
-        {devices.length > 0 &&
-          <>
-            {devices.map((row) => (
-              <Stack
-                key={row.id}
-                sx={{
-                  width: isMobile ? "100%" : "31.25rem",
-                  height: isMobile ? '22rem' : "24rem",
-                  borderRadius: "20px",
-                  border: "1px solid #D3D3D3",
-                }}
-              >
+        {devices.length > 0 ? (
+            <>
+              {devices.map((row) => (
                 <Stack
+                  key={row.id}
                   sx={{
-                    width: "100%",
-                    height: "3rem",
-                    background: "#D3D3D3",
-                    borderRadius: "20px 20px 0 0",
-                    padding: "1rem",
-                    justifyContent: "center",
+                    width: isMobile ? "100%" : "31.25rem",
+                    height: isMobile ? '22rem' : "24rem",
+                    borderRadius: "20px",
+                    border: "1px solid #D3D3D3",
                   }}
                 >
-                  <Typography fontWeight={500} fontSize="1.2rem">
-                    {row.name}
-                  </Typography>
-                </Stack>
-                <Stack
-                  sx={{
-                    width: "100%",
-                    padding: "1rem",
-                    marginTop: isMobile ? '1rem' : "2rem",
-                    alignItems: "center",
-                    display: "flex",
-                    flexDirection: "column",
-                  }}
-                >
-                  <Typography fontWeight={500} fontSize="1.2rem">
-                    Comandos
-                  </Typography>
                   <Stack
                     sx={{
                       width: "100%",
+                      height: "3rem",
+                      background: "#D3D3D3",
+                      borderRadius: "20px 20px 0 0",
+                      padding: "1rem",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Typography fontWeight={500} fontSize="1.2rem">
+                      {row.name}
+                    </Typography>
+                  </Stack>
+                  <Stack
+                    sx={{
+                      width: "100%",
+                      padding: "1rem",
+                      marginTop: isMobile ? '1rem' : "2rem",
                       alignItems: "center",
                       display: "flex",
                       flexDirection: "column",
-                      marginTop: "1rem",
                     }}
                   >
-                    {row.listCommands !== undefined &&
-                      <>
-                        {row.listCommands
-                          .slice(
-                            (devicePages[row.id] || 1) * rowsPerPage - rowsPerPage,
-                            (devicePages[row.id] || 1) * rowsPerPage
-                          )
-                          .map((row) => (
-                            <Button
-                              onClick={() => handleCommandClick(row.id)}
-                              key={row.id}
-                              sx={{
-                                background: "#808080",
-                                width: "80%",
-                                color: "#FFFFFF",
-                                fontWeight: 400,
-                                margin: "0.5rem",
-                                "&:hover": {
-                                  background: "#DCDCDC",
-                                  color: "#000000",
-                                  fontWeight: 500,
-                                },
-                              }}
-                            >
-                              {row.name}
-                            </Button>
-                          ))}
-                      </>
-                    }
-                  </Stack>
-                  <Stack
-                    mt={2}
-                    sx={{
-                      justifyContent: "center",
-                      width: "100%",
-                      alignItems: "center",
-                    }}
-                  >
-                    {(row.listCommands !== undefined && row.listCommands.length > 1 ) &&
-                      <Pagination
-                        count={Math.ceil(row.listCommands.length / rowsPerPage)}
-                        page={devicePages[row.id] || 1}
-                        onChange={(_event, page) => handleChangePage(row.id, page)}
-                        sx={{
-                          alignItems: "end !important",
-                          "& .Mui-selected": {
-                            backgroundColor: "#556B2F !important",
-                            color: "#fff",
-                          },
-                        }}
-                        size="small"
-                      />
-                    }
+                    <Typography fontWeight={500} fontSize="1.2rem">
+                      Comandos
+                    </Typography>
+                    <Stack
+                      sx={{
+                        width: "100%",
+                        alignItems: "center",
+                        display: "flex",
+                        flexDirection: "column",
+                        marginTop: "1rem",
+                      }}
+                    >
+                      {(row.listCommands !== undefined && row.listCommands.length > 0) &&
+                        <>
+                          {row.listCommands
+                            .slice(
+                              (devicePages[row.id] || 1) * rowsPerPage - rowsPerPage,
+                              (devicePages[row.id] || 1) * rowsPerPage
+                            )
+                            .map((row) => (
+                              <Button
+                                onClick={() => handleCommandClick(row.id)}
+                                key={row.id}
+                                sx={{
+                                  background: "#808080",
+                                  width: "80%",
+                                  color: "#FFFFFF",
+                                  fontWeight: 400,
+                                  margin: "0.5rem",
+                                  "&:hover": {
+                                    background: "#DCDCDC",
+                                    color: "#000000",
+                                    fontWeight: 500,
+                                  },
+                                }}
+                              >
+                                {row.name}
+                              </Button>
+                            ))}
+                        </>
+                      }
+                    </Stack>
+                    <Stack
+                      mt={2}
+                      sx={{
+                        justifyContent: "center",
+                        width: "100%",
+                        alignItems: "center",
+                      }}
+                    >
+                      {(row.listCommands !== undefined && row.listCommands.length > 1 ) &&
+                        <Pagination
+                          count={Math.ceil(row.listCommands.length / rowsPerPage)}
+                          page={devicePages[row.id] || 1}
+                          onChange={(_event, page) => handleChangePage(row.id, page)}
+                          sx={{
+                            alignItems: "end !important",
+                            "& .Mui-selected": {
+                              backgroundColor: "#556B2F !important",
+                              color: "#fff",
+                            },
+                          }}
+                          size="small"
+                        />
+                      }
+                    </Stack>
                   </Stack>
                 </Stack>
-              </Stack>
-            ))}
-          </>
+              ))}
+            </>
+        ) : (
+          <></>
+        )
         }
       </Stack>
       <Modal open={openModal} onClose={handleCloseModal}>
