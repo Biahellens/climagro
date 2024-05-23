@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import 'reflect-metadata';
 import { createConnection, ConnectionOptions, Connection } from 'typeorm';
-import { Task } from './entities/Task';
+import { Device } from './entities/Device';
 import { User } from './entities/User';
 
 const port = process.env.DATABASE_PORT as number | undefined;
@@ -13,7 +13,7 @@ const connectionOptions: ConnectionOptions = {
   username: process.env.DATABASE_USER,
   password: process.env.DATABASE_PASSWORD,
   database: process.env.DATABASE_DB,
-  entities: [User, Task],
+  entities: [User, Device],
   migrations: [`${__dirname}/**/migrations/*.{ts,js}`],
 };
 
