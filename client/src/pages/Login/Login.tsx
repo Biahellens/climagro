@@ -5,8 +5,7 @@ import { LoadingButton } from "@mui/lab";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { User } from "@models/User";
-import { UserContext } from "@contexts/userContext/UserContext";
+import { UserShow } from "@models/User";
 
 // Icons
 import CircularProgress from "@mui/material/CircularProgress";
@@ -14,6 +13,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 // Imgs
 import bg_green from "@assets/green_infos.png";
 import icon_climagro from "@assets/icon_climagro.svg";
+import { UserContext } from "@contexts/userContext/UserContext";
 
 
 export default function Login() {
@@ -27,28 +27,26 @@ export default function Login() {
   const { handleLogin } = useContext(UserContext);
 
   const login = async () => {
-    if (email == "" || password == "") {
+    if (email === "" || password === "") {
       toast.warn("Favor preencher todos os campos antes de prosseguir");
       return;
     }
+
     try {
       setLoading(true);
-      const user: User | undefined | null = await handleLogin(
-        email,
-        password
-      );
+      const user: UserShow | undefined | null = await handleLogin(email, password);
       if (user) {
-        console.log("USUARIO");
-        console.log(user);
+        console.log("Usuário logado:", user);
         navigate("/dashboard");
       }
     } catch (err) {
+      console.error("Erro durante o login:", err);
       toast.error("Usuário ou senha incorreto!");
-      return;
     } finally {
       setLoading(false);
     }
   };
+
 
   return (
     <Stack

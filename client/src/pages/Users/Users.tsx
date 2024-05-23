@@ -152,7 +152,6 @@ export default function Users() {
                       <StyledTableCell component="th" scope="row" size="small">
                         {row.id}
                       </StyledTableCell>
-                      <StyledTableCell size="small">{row.name}</StyledTableCell>
                       <StyledTableCell size="small">
                         {row.email}
                       </StyledTableCell>
@@ -187,10 +186,6 @@ export default function Users() {
                   marginTop: "1.5rem",
                 }}
               >
-                <Stack width="100%" flexDirection="row">
-                  <Typography mr="0.5rem">Nome:</Typography>
-                  <Typography>{row.name}</Typography>
-                </Stack>
                 <Stack width="100%" flexDirection="row">
                   <Typography mr="0.5rem">email:</Typography>
                   <Typography>{row.email}</Typography>

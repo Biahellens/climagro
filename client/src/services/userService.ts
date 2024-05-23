@@ -29,7 +29,7 @@ export const UserService = {
       }
     }
   },
-  Login: async (phone: string, password: string) => {
+  Login: async (email: string, password: string) => {
     try {
       const API_URL = `${baseUrlApi.baseUrlApi}/user/login`;
       const httpHeaders = {
@@ -38,7 +38,7 @@ export const UserService = {
       const response: AxiosResponse = await axios.post(
         API_URL,
         {
-          phone: phone,
+          email: email,
           password: password,
         },
         {

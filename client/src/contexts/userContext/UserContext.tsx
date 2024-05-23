@@ -1,5 +1,5 @@
 import React, { ReactNode, createContext, useEffect, useState } from "react";
-import { User } from "@models/User";
+import { UserShow } from "@models/User";
 import { UserService } from "@services/userService";
 
 const UserContext = createContext<UserContextProps>({} as UserContextProps);
@@ -9,22 +9,22 @@ interface UserContextProviderProps {
 }
 
 interface UserContextProps {
-  user: User | null;
-  setUser: React.Dispatch<React.SetStateAction<User | null>>;
+  user: UserShow | null;
+  setUser: React.Dispatch<React.SetStateAction<UserShow | null>>;
   handleLogout: () => void;
-  handleLogin: (email: string, password: string) => Promise<User | null | undefined>;
-  updateUserInfo: (updatedUser: User) => void;
+  handleLogin: (email: string, password: string) => Promise<UserShow | null | undefined>;
+  updateUserInfo: (updatedUser: UserShow) => void;
 }
 
 export const UserContextProvider: React.FC<UserContextProviderProps> = ({
   children,
 }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<UserShow | null>(null);
 
   const handleLogin = async (
     email: string,
     password: string
-  ): Promise<User | null | undefined> => {
+  ): Promise<UserShow | null | undefined> => {
     try {
       const response = await UserService.Login(email, password);
       if (response) {
@@ -49,7 +49,7 @@ export const UserContextProvider: React.FC<UserContextProviderProps> = ({
     }
   };
 
-  const updateUserInfo = (updatedUser: User) => {
+  const updateUserInfo = (updatedUser: UserShow) => {
     setUser(updatedUser);
     localStorage.setItem("user", JSON.stringify(updatedUser));
 };

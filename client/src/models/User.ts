@@ -1,12 +1,10 @@
-export interface User {
-  id: number,
-  name: string,
+export type User = {
+  id: null | number,
   email: string,
   password: string
 }
 
-export interface UserShow {
-  id: number,
-  name: string,
+export type UserShow = {
+  id: null | number,
   email: string,
 }

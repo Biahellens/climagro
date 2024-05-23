@@ -14,7 +14,6 @@ export default function NewUser() {
 
   const [formData, setFormData] = useState({
     id: 0,
-    name: "",
     email: "",
     password: "",
   });
@@ -28,14 +27,13 @@ export default function NewUser() {
   };
 
   const createUser = async () => {
-    if (!formData?.email || !formData?.name || !formData?.password) {
+    if (!formData?.email || !formData?.password) {
       toast.info("Por favor, preencha todos os campos.");
       return;
     }
 
     const userBody: User = {
       id: 0,
-      name: formData.name,
       email: formData.email.toLocaleLowerCase(),
       password: formData.password,
     };
@@ -53,7 +51,6 @@ export default function NewUser() {
 
       setFormData({
         id: 0,
-        name: "",
         email: "",
         password: "",
       });
@@ -112,12 +109,13 @@ export default function NewUser() {
                 marginBottom: "0.5rem",
               }}
             >
-              Nome:
+              Email
             </Typography>
+
             <OutlinedInput
-              placeholder="Digite seu nome..."
-              name="name"
-              value={formData.name}
+              placeholder="Digite seu email..."
+              name="email"
+              value={formData.email}
               onChange={handleChange}
             />
           </Stack>
@@ -137,23 +135,6 @@ export default function NewUser() {
               onChange={handleChange}
             />
           </Stack>
-        </Stack>
-        <Stack width="100%" mt="2rem">
-          <Typography
-            sx={{
-              fontSize: "1rem",
-              marginBottom: "0.5rem",
-            }}
-          >
-            Email
-          </Typography>
-
-          <OutlinedInput
-            placeholder="Digite seu email..."
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-          />
         </Stack>
       </Stack>
       <Stack
