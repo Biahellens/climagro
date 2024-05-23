@@ -96,28 +96,37 @@ export class DeviceController {
     }
 }
 
-
-
   static async getDevicesByUser(req: AuthenticatedRequest, res: Response) {
     try {
-        if (!req.currentUser) {
-            return res.status(401).json({ message: 'Usuário não autenticado' });
-        }
+      if (!req.currentUser) {
+          return res.status(401).json({ message: 'Usuário não autenticado' });
+      }
 
-        const authenticatedUser: User = req.currentUser;
+      const authenticatedUser: User = req.currentUser;
 
-        const devices = await getRepository(Device)
-            .createQueryBuilder("device")
-            .leftJoinAndSelect("device.listCommands", "command")
-            .where("command.userId = :userId", { userId: authenticatedUser.id })
-            .getMany();
+      const device = await getRepository(Device)
+          .createQueryBuilder("device")
+          .leftJoinAndSelect("device.listCommands", "command")
+          .where("command.userId = :userId", { userId: authenticatedUser.id })
+          .getOne();
 
-        console.info(devices);
-        return res.status(200).json(devices);
-    } catch (error) {
-        console.error('Erro ao obter dispositivos do usuário:', error);
-        return res.status(500).json({ message: 'Erro interno do servidor' });
-    }
+      if (!device) {
+          return res.status(404).json({ message: 'Nenhum dispositivo encontrado para este usuário' });
+      }
+
+      const firstCommand = device.listCommands[0]; 
+      if (!firstCommand) {
+          return res.status(404).json({ message: 'Nenhum comando encontrado para este dispositivo' });
+      }
+
+      const firstCommandUserId = firstCommand.user.id;
+
+      console.info("ID do usuário associado ao primeiro comando:", firstCommandUserId);
+      return res.status(200).json({ userId: firstCommandUserId });
+  } catch (error) {
+      console.error('Erro ao obter ID do usuário do primeiro comando:', error);
+      return res.status(500).json({ message: 'Erro interno do servidor' });
+  }
   }
 
   static async deleteDevice(req: AuthenticatedRequest, res: Response) {

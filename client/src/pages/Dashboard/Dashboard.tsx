@@ -87,9 +87,10 @@ export default function Dashboard() {
       console.log('oooi ---')
       try {
         const result = await DeviceService.GetByUserId()
-        if(Array.isArray(result)){
-          setDevices(result)
-          console.log(devices)
+        if(result){
+          console.log('oooi ---', result)
+          setDevices(result.devices)
+          console.log('oooi ---', devices)
         }
       } catch (error) {
         console.error('Error fetching devices:', error)
