@@ -13,7 +13,7 @@ export default function NewUser() {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    id: 0,
+    id: '',
     email: "",
     password: "",
   });
@@ -33,7 +33,7 @@ export default function NewUser() {
     }
 
     const userBody: User = {
-      id: 0,
+      id: '',
       email: formData.email.toLocaleLowerCase(),
       password: formData.password,
     };
@@ -50,7 +50,7 @@ export default function NewUser() {
       });
 
       setFormData({
-        id: 0,
+        id: '',
         email: "",
         password: "",
       });

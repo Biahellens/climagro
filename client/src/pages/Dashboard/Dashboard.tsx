@@ -25,6 +25,8 @@ import { UserContext } from "@contexts/userContext/UserContext";
 import { DeviceService } from "@services/deviceService";
 import "react-toastify/dist/ReactToastify.css";
 import { CommandsShow } from "@models/Command";
+import { TelnetService } from "@services/telnetService";
+import { Telnet } from "@models/Telnet";
 
 type DevicePages = {
   [deviceId: string]: number;
@@ -54,6 +56,14 @@ const StyledTableRow = styled(TableRow)(() => ({
 export default function Dashboard() {
   const { isMobile } = UseMobile();
 
+  const [response, setResponse] = useState<string>('');
+
+  const [formData, setFormData] = useState({
+    host: '',
+    port: 23,
+    command: ''
+  })
+
   const [devices, setDevices] = useState<CommandsShow[]>([]);
   const { user } = useContext(UserContext);
   const userId = user ? user.id : null;
@@ -70,9 +80,17 @@ export default function Dashboard() {
     }));
   };
 
-  const handleCommandClick = (commandId: number) => {
+  const handleCommandClick = (commandId: number, commandUrl: string) => {
     setSelectedCommand(commandId);
-    setOpenModal(true);
+    setFormData({
+      host: '',
+      port: 23,
+      command: commandUrl
+    })
+    handleTelnetAccess()
+    setTimeout(() => {
+      setOpenModal(true);
+    }, 200);
   };
 
   const handleCloseModal = () => {
@@ -96,6 +114,28 @@ export default function Dashboard() {
   useEffect(() => {
     getDevices();
   }, []);
+
+  const handleTelnetAccess = async () => {
+    try{
+      const telnetBody: Telnet = {
+        host: formData.host,
+        port: formData.port,
+        command: formData.command
+      };
+
+      const response = await TelnetService.Post(telnetBody)
+
+      setResponse(response)
+
+      setFormData({
+        host: '',
+        port: 23,
+        command: ''
+      })
+    } catch(error){
+      console.error(error)
+    }
+  };
 
   return (
     <Stack width="100vw" height={isMobile ? "100%" : "100vh"} padding="2rem">
@@ -181,7 +221,7 @@ export default function Dashboard() {
                             )
                             .map((row) => (
                               <Button
-                                onClick={() => handleCommandClick(row.id)}
+                                onClick={() => handleCommandClick(row.id, row.url)}
                                 key={row.id}
                                 sx={{
                                   background: "#808080",
@@ -285,9 +325,7 @@ export default function Dashboard() {
                 >
                   <TableHead sx={{ backgroundColor: "#666" }}>
                     <TableRow sx={{ backgroundColor: "#666" }}>
-                      <StyledTableCell>Nome</StyledTableCell>
-                      <StyledTableCell>Tipo</StyledTableCell>
-                      <StyledTableCell>resposta</StyledTableCell>
+                      <StyledTableCell>Resposta</StyledTableCell>
                       <StyledTableCell></StyledTableCell>
                     </TableRow>
                   </TableHead>
@@ -302,11 +340,9 @@ export default function Dashboard() {
                       }}
                     >
                       <StyledTableCell component="th" scope="row" size="small">
-                        name
+                        {response}
                       </StyledTableCell>
-                      <StyledTableCell size="small">Resultado</StyledTableCell>
-                      <StyledTableCell size="small">resposta</StyledTableCell>
-                      <StyledTableCell size="small">resposta</StyledTableCell>
+                      <StyledTableCell size="medium"></StyledTableCell>
                     </StyledTableRow>
                   </TableBody>
                 </Table>

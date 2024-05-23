@@ -3,6 +3,7 @@ import cors from 'cors';
 import { createConnection } from 'typeorm';
 import { userRouter } from './routes/user.routes';
 import { deviceRouter } from './routes/devices.routes';
+import { telnetRouter } from './routes/telnet.routes';
 
 (async () => {
   await createConnection();
@@ -22,6 +23,9 @@ import { deviceRouter } from './routes/devices.routes';
 
   // Rotas para o DeviceController
   app.use("/devices", deviceRouter);
+
+  // Rotas para o telnetController
+  app.use("/telnet", telnetRouter);
 
   app.get('/', (req, res) => {
     return res.json('Established connection!');
